@@ -49,17 +49,24 @@ import { Db, MongoClient, ObjectId } from 'mongodb';
  */
 export async function GET(request, { params }) {
   try {
+    //Connexion a la base de données
     const client = await clientPromise;
     const db = client.db('sample_mflix');
     
+    // Récupération de l'ID du commentaire depuis les paramètres de la requête
     const { idComment } = params;
+
+     // Vérification si l'ID est valide
     if (!ObjectId.isValid(idComment)) {
       return NextResponse.json({ status: 400, message: 'Invalid Comment ID', error: 'ID format is incorrect' });
     }
     
+    // Recherche du commentaire dans la collection
     const comment = await db.collection('comments').findOne({ _id: new ObjectId(idComment) });
     
+    // Vérification si le commentaire existe
     if (!comment) {
+      // Retourne le commentaire trouvé
       return NextResponse.json({ status: 404, message: 'Comment not found', error: 'No comment found with the given ID' });
     }
     
@@ -117,14 +124,17 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ status: 400, message: 'Invalid comment ID' }, { status: 400 });
     }
 
+    // On vérifie si au moins un champ est fourni pour la mise à jour
     if (!body.name && !body.email) {
       return NextResponse.json({ status: 400, message: 'At least one field (name or email) is required' }, { status: 400 });
     }
 
+    // On prépare les champs à mettre à jour
     const updateFields = {};
     if (body.name) updateFields.name = body.name;
     if (body.email) updateFields.email = body.email;
 
+    // On met a jour le commentaire dans la base de données
     const result = await db.collection('comments').updateOne(
       { _id: new ObjectId(idComment) },
       { $set: updateFields }
@@ -177,8 +187,10 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ status: 400, message: 'Invalid comment ID' }, { status: 400 });
     }
 
+    //On supprime les commentaires de la base de données
     const result = await db.collection('comments').deleteOne({ _id: new ObjectId(idComment) });
 
+    //On vérifie si le commentaire existe
     if (result.deletedCount === 0) {
       return NextResponse.json({ status: 404, message: 'Comment not found' }, { status: 404 });
     }

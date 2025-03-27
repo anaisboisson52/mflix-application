@@ -17,10 +17,12 @@ import clientPromise from '@/lib/mongodb';
  */
 export async function GET() {
   try {
+    //Connexion à la bdd
     const client = await clientPromise;
     const db = client.db('sample_mflix');
     const theaters = await db.collection('theaters').find({}).limit(10).toArray();
 
+    //retourne la liste de théatre au format JSON
     return NextResponse.json({ status: 200, data: theaters });
   } catch (error) {
     return NextResponse.json({ status: 500, message: 'Internal Server Error', error: error.message });
@@ -86,17 +88,21 @@ export async function GET() {
  */
 export async function POST(request) {
   try {
+    //Connexion a la bdd
     const client = await clientPromise;
     const db = client.db('sample_mflix');
 
     const body = await request.json();
 
+    // Vérification de la présence des champs requis
     if (!body.city || !body.state) {
       return NextResponse.json({ status: 400, message: 'Missing required fields', error: 'city and state are required' }, { status: 400 });
     }
 
+    // Création du nouveau théâtre
     const newTheater = { city: body.city, state: body.state };
 
+    // Insertion du théâtre dans la collection
     const result = await db.collection('theaters').insertOne(newTheater);
 
     return NextResponse.json({ status: 201, message: 'Theater added successfully', data: { id: result.insertedId } }, { status: 201 });

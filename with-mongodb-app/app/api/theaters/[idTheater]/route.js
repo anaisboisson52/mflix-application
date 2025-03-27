@@ -50,22 +50,28 @@ import { Db, MongoClient, ObjectId } from 'mongodb';
  */
 export async function GET(request, { params }) {
     try {
+      //Connexion à la bdd
       const client = await clientPromise;
       const db = client.db('sample_mflix');
       
       const { idTheater } = params;
+      // Vérification de l'ID 
       if (!ObjectId.isValid(idTheater)) {
         return NextResponse.json({ status: 400, message: 'Invalid theater ID', error: 'ID format is incorrect' });
       }
       
+       // Recherche du théâtre par ID
       const theater = await db.collection('theaters').findOne({ _id: new ObjectId(idTheater)});
       
+      // Vérification si le théâtre existe
       if (!theater) {
+        // Retourne les données du théâtre si trouvé
         return NextResponse.json({ status: 404, message: 'Theater not found', error: 'No theater found with the given ID' });
       }
       
       return NextResponse.json({ status: 200, data: { theater } });
     } catch (error) {
+      //Gestion d'erreurs
       return NextResponse.json({ status: 500, message: 'Internal Server Error', error: error.message });
     }
   }
@@ -119,19 +125,23 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ status: 400, message: 'Invalid theater ID' }, { status: 400 });
     }
 
+    // Vérification qu'au moins un champ est fourni
     if (!body.city && !body.state) {
       return NextResponse.json({ status: 400, message: 'At least one field (city or state) is required' }, { status: 400 });
     }
 
+    // Construction des champs à mettre à jour
     const updateFields = {};
     if (body.city) updateFields.city = body.city;
     if (body.state) updateFields.state = body.state;
 
+    // Mise à jour du théâtre
     const result = await db.collection('theaters').updateOne(
       { _id: new ObjectId(idTheater) },
       { $set: updateFields }
     );
 
+    // Vérification si l'ID existe bien dans la BDD
     if (result.matchedCount === 0) {
       return NextResponse.json({ status: 404, message: 'Theater not found' }, { status: 404 });
     }
@@ -176,12 +186,15 @@ export async function DELETE(request, { params }) {
     
     const { idTheater } = params;
 
+    // Vérification de l'ID
     if (!ObjectId.isValid(idTheater)) {
       return NextResponse.json({ status: 400, message: 'Invalid theater ID' }, { status: 400 });
     }
 
+     // Suppression du théâtre
     const result = await db.collection('theaters').deleteOne({ _id: new ObjectId(idTheater) });
 
+    // Vérification si le théâtre a bien été supprimé
     if (result.deletedCount === 0) {
       return NextResponse.json({ status: 404, message: 'Theater not found' }, { status: 404 });
     }
