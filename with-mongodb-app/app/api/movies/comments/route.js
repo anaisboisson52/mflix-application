@@ -104,7 +104,7 @@ export async function POST(request) {
     // Création d'un objet commentaire avec les données reçues
     const newComment = {
       name: body.name,
-      email: body.email
+      email: body.email 
     };
 
     // Insertion du nouveau commentaire dans la collection "comments"
