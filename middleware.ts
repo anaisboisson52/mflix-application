@@ -5,7 +5,7 @@ import { jwtVerify } from "jose";
 const SECRET_KEY = process.env.JWT_SECRET || "super-secret-key";
 
 // Liste des routes publiques
-const publicRoutes = ["/auth/login", "/auth/signup", "/api-doc"];
+const publicRoutes = ["api/auth/login", "api/auth/signup", "/api-doc"];
 
 export async function middleware(req: NextRequest) {
   if (publicRoutes.includes(req.nextUrl.pathname)) {
@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
   const refreshToken = req.cookies.get('refreshToken')?.value;
 
   if (!token && !refreshToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("api/auth/login", req.url));
   }
 
   try {
@@ -26,18 +26,18 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     if (!refreshToken) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("api/auth/login", req.url));
     }
 
     // Essayer de rafraîchir le token
     try {
-      const refreshResponse = await fetch(new URL("/api/auth/refresh", req.url), {
+      const refreshResponse = await fetch(new URL("/api/auth/signup", req.url), {
         method: "GET",
         headers: { Cookie: `refreshToken=${refreshToken}` }
       });
 
       if (!refreshResponse.ok) {
-        return NextResponse.redirect(new URL("/login", req.url));
+        return NextResponse.redirect(new URL("api/auth/login", req.url));
       }
 
       const { token: newToken } = await refreshResponse.json();
@@ -46,7 +46,7 @@ export async function middleware(req: NextRequest) {
 
       return response;
     } catch {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("api/auth/login", req.url));
     }
   }
 }
