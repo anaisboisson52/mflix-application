@@ -87,8 +87,7 @@ export async function POST(req) {
     const response = NextResponse.json({ message: "Authentifié", jwt: token });
     response.cookies.set('token', token, { httpOnly: true, secure: true, path: '/' });
     response.cookies.set('refreshToken', refreshToken, { httpOnly: true, secure: true, path: '/' });
-    console.log("🔑 Login - REFRESH_SECRET utilisé:", process.env.REFRESH_SECRET);
-
+    
     return response;
   } catch (error) {
     return NextResponse.json({ error: "Une erreur s'est produite" }, { status: 500 });
