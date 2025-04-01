@@ -5,15 +5,16 @@ import { jwtVerify } from "jose";
 const SECRET_KEY = process.env.JWT_SECRET || "super-secret-key";
 
 // Liste des routes publiques
-const publicRoutes = ["/login", "/register", "/api-doc"];
+const publicRoutes = ["/auth/login", "/auth/signup", "/api-doc"];
 
 export async function middleware(req: NextRequest) {
   if (publicRoutes.includes(req.nextUrl.pathname)) {
     return NextResponse.next();
   }
 
-  const token = req.cookies.get("token")?.value;
-  const refreshToken = req.cookies.get("refreshToken")?.value;
+  // Essayez de récupérer le token depuis les cookies, ou depuis l'en-tête Authorization (si présent)
+  const token = req.cookies.get('token')?.value || req.headers.get('authorization')?.split(' ')[1];
+  const refreshToken = req.cookies.get('refreshToken')?.value;
 
   if (!token && !refreshToken) {
     return NextResponse.redirect(new URL("/login", req.url));
