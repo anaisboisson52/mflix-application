@@ -77,8 +77,6 @@ Pour cela il faut se rendre sur :
 http://localhost:3000/api/docs
 ```
 
-### Accès à Swagger UI
-
 Le projet contient plusieurs routes :
 
 ## 📬 Les routes
@@ -102,6 +100,11 @@ Le projet contient plusieurs routes :
 - `GET /api/comments/:id` - Récupère un commentaire spécifique
 - `PUT /api/comments/:id` - Modifie un commentaire
 - `DELETE /api/comments/:id` - Supprime un commentaire
+
+### 💬 Authentification
+- `POST /api/auth/login` - Pour se connecter
+- `POST /api/auth/signin` - Pour se créer un compte
+- `POST /api/auth/signout` - Pour se déconnecter
 
 ## 🛠️ En cas de problème
 

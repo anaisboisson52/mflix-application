@@ -6,6 +6,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "cookie": "^1.0.2",
+    "dotenv": "^16.4.7",
+    "jose": "^6.0.10",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
     "next": "latest",
     "next-swagger-doc": "^0.3.0",
@@ -14,6 +20,7 @@
     "swagger-ui-react": "^5.20.1"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
