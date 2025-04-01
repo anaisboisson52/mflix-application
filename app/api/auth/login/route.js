@@ -2,7 +2,7 @@ require('dotenv').config(); // Charger les variables d'environnement
 
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { SignJWT } from 'jose'; // Utiliser SignJWT pour signer les tokens
 import clientPromise from '@/lib/mongodb'; // Assurez-vous que ce fichier est bien configuré
 import { ObjectId } from 'mongodb';
 
@@ -74,16 +74,20 @@ export async function POST(req) {
       return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 });
     }
 
-    // Générer un JWT et un refresh token
-    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ email }, REFRESH_SECRET, { expiresIn: '7d' });
+    // Générer un JWT et un refresh token avec SignJWT de jose
+    const token = await new SignJWT({ email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .sign(new TextEncoder().encode(SECRET_KEY));
+
+    const refreshToken = await new SignJWT({ email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .sign(new TextEncoder().encode(REFRESH_SECRET));
 
     // Stocker les tokens dans des cookies (httpOnly pour la sécurité)
     const response = NextResponse.json({ message: "Authentifié", jwt: token });
     response.cookies.set('token', token, { httpOnly: true, secure: true, path: '/' });
     response.cookies.set('refreshToken', refreshToken, { httpOnly: true, secure: true, path: '/' });
     console.log("🔑 Login - REFRESH_SECRET utilisé:", process.env.REFRESH_SECRET);
-
 
     return response;
   } catch (error) {
