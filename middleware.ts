@@ -1,8 +1,6 @@
-// middleware.ts
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose"; 
 
 const SECRET_KEY = process.env.JWT_SECRET || "super-secret-key";
 
@@ -22,7 +20,8 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    jwt.verify(token!, SECRET_KEY);
+    // Vérification du token JWT avec 'jose'
+    await jwtVerify(token!, new TextEncoder().encode(SECRET_KEY));
     return NextResponse.next();
   } catch (error) {
     if (!refreshToken) {

@@ -1,9 +1,9 @@
-require('dotenv').config(); // Charger les variables d'environnement
+require('dotenv').config(); 
 
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import { SignJWT } from 'jose'; // Utiliser SignJWT pour signer les tokens
-import clientPromise from '@/lib/mongodb'; // Assurez-vous que ce fichier est bien configuré
+import bcrypt from 'bcrypt';
+import { SignJWT } from 'jose'; 
+import clientPromise from '@/lib/mongodb'; 
 import { ObjectId } from 'mongodb';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'super-secret-key';
@@ -87,7 +87,7 @@ export async function POST(req) {
     const response = NextResponse.json({ message: "Authentifié", jwt: token });
     response.cookies.set('token', token, { httpOnly: true, secure: true, path: '/' });
     response.cookies.set('refreshToken', refreshToken, { httpOnly: true, secure: true, path: '/' });
-    
+
     return response;
   } catch (error) {
     return NextResponse.json({ error: "Une erreur s'est produite" }, { status: 500 });

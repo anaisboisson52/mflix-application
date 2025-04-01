@@ -1,9 +1,9 @@
-require('dotenv').config(); // Charger les variables d'environnement
+require('dotenv').config();
 
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import { SignJWT } from 'jose'; // Importer SignJWT pour signer les JWT
-import clientPromise from '@/lib/mongodb'; // Assurez-vous que ce fichier est bien configuré
+import bcrypt from 'bcrypt';
+import { SignJWT } from 'jose';
+import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'super-secret-key';
